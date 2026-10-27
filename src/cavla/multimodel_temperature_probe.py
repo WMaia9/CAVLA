@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import inspect
 import json
+import os
 from pathlib import Path
 import random
 import sys
@@ -16,8 +17,9 @@ import numpy as np
 import torch
 from cavla.temperature_probe import TAUS
 
-ROOT=Path('/mnt/datasets/alpamayo/carlamayo-integration')
-CHECKPOINTS={'r1':Path('/home/perceptron-lab/.cache/huggingface/hub/models--nvidia--Alpamayo-R1-10B/snapshots/d72c6a2757b10cacb69b688ca66ccfad3dafbf37')}
+# Machine-specific locations; the defaults are the original workstation's.
+ROOT=Path(os.environ.get('CAVLA_ALPAMAYO_INTEGRATION','/mnt/datasets/alpamayo/carlamayo-integration'))
+CHECKPOINTS={'r1':Path(os.environ.get('CAVLA_R1_CHECKPOINT','/home/perceptron-lab/.cache/huggingface/hub/models--nvidia--Alpamayo-R1-10B/snapshots/d72c6a2757b10cacb69b688ca66ccfad3dafbf37'))}
 CONFIGS=[('euler',k,1.) for k in [1,2,4,6,10]]+[('heun',32,tau) for tau in TAUS]
 
 
@@ -57,7 +59,7 @@ def main():
     source=Path(__file__).read_bytes();(args.out/'source_snapshot.py').write_bytes(source)
     records=sorted((r for r in json.loads((args.data/'records.json').read_text()) if 'error' not in r),key=lambda r:r['name'])[args.range[0]:args.range[1]]
     if args.model=='r1':
-        sys.path.insert(0,'/mnt/datasets/Explainability/alpamayo/src')
+        sys.path.insert(0,os.environ.get('CAVLA_R1_SRC','/mnt/datasets/Explainability/alpamayo/src'))
         import alpamayo_r1.models.alpamayo_r1 as module
         from alpamayo_r1 import helper
         # This checkout registers diagnostic hooks that copy FFN activations to host RAM; disable them locally.

@@ -4,17 +4,19 @@ Same capture procedure as native_solver_probe (language seed 123, official
 Euler10 replay checked against the model sampler), packaged for reuse.
 """
 import copy
+import os
 import gc
 from pathlib import Path
 import sys
 import numpy as np
 import torch
 
-CHECKPOINT=Path('/home/perceptron-lab/.cache/huggingface/hub/models--nvidia--Alpamayo-1.5-10B/snapshots/7aba8293c09993f2e125c6819df05d7fa3e873ea')
+# Machine-specific locations; the defaults are the original workstation's.
+CHECKPOINT=Path(os.environ.get('CAVLA_A15_CHECKPOINT','/home/perceptron-lab/.cache/huggingface/hub/models--nvidia--Alpamayo-1.5-10B/snapshots/7aba8293c09993f2e125c6819df05d7fa3e873ea'))
 
 
 def load_alpamayo():
-    root=Path('/mnt/datasets/alpamayo/carlamayo-integration');sys.path.insert(0,str(root))
+    root=Path(os.environ.get('CAVLA_ALPAMAYO_INTEGRATION','/mnt/datasets/alpamayo/carlamayo-integration'));sys.path.insert(0,str(root))
     sys.path.insert(0,str(root/'third_party/alpamayo1.5/src'))
     from module.alpamayo_compat import patch_legacy_hydra_targets
     patch_legacy_hydra_targets()
