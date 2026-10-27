@@ -3,7 +3,6 @@
 # Usage: sbatch cluster/probe_multi.sbatch MODEL OUT_PREFIX START STOP [DATA]; the clip range is split into 4 contiguous shards OUT_PREFIX_c{0..3}.
 #SBATCH --account=project_ucm_rossgreer
 #SBATCH --partition=test
-#SBATCH --qos=test
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=2
 #SBATCH --gres=gpu:nvidia_h200_nvl:2

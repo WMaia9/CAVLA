@@ -121,3 +121,12 @@ Critérios de equivalência acrescentados por sugestão da revisão, além das p
 
 ### Execução (27/10 12:12)
 R1 e A2 nos clipes fora do treino passam a rodar em 3 processos do mesmo código, em faixas disjuntas de clipes, mesclados depois (cavla.merge_probe_shards, que confere hash do código e seeds). Nenhuma mudança de código ou numérica: cada clipe roda como antes, só em paralelo.
+
+### Execução do A2 no cluster (27/10)
+
+**Onde roda.** O A2 nos 120 clipes fora do treino roda inteiro em H200 (cluster da UC Merced, partição test), em 4 shards de 30 clipes, com o mesmo código (caminhos configuráveis por variável de ambiente) e o mesmo snapshot do checkpoint.
+
+**Checagem de hardware.** No clipe context_100 do v1:
+- as trajetórias diferem das da estação local em ~0,09 m (mediana do máximo por trajetória), por arredondamento bf16;
+- o spread entre seeds bate: E10 0,823 vs 0,822 m; Heun-32 1,288 vs 1,290 m;
+- nenhum modelo mistura hardware dentro da replicação.
