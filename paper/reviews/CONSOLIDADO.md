@@ -335,3 +335,11 @@ Notas: Reviewer 2 5 (=), equilibrado 5 (=), apresentação 6,5 (↑ de 6).
 
 ## v5.12 (27/10)
 - O z-lab entrou no find:flash (τ_eff 0,65; ganho sobre o E8 de 0,11 m; resíduo +0,008 [−0,042; 0,062]). O TODO do checkpoint otimizado foi removido.
+
+## v5.13 (27/10): citações (literature_deep_read itens 5–8 e 11)
+- BigGAN agora descrito como truncamento, e não como escala de ruído.
+- Biroli: só a janela de especiação; as regras de onde começar ou colocar passos ficam com Raya e Stancevic.
+- AdaVLA saiu da lista de 'first-order integration' (usa RK2).
+- Euler 10 passos atribuído ao código liberado; o relatório do R1 avalia 5.
+- π0 passou a ser citado.
+- Pendente: SubFlow; Ning 2024, Analytic-DPM, Flow-GRPO, Yue 2025 e GoalFlow; frase sobre o Coda.
