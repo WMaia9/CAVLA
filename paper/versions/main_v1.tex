@@ -1,0 +1,194 @@
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+\usepackage{icml2026}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+\usepackage[capitalize,noabbrev]{cleveref}
+\usepackage{xcolor}
+\usepackage[textsize=tiny]{todonotes}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Findings are the paper's unit of evidence: one claim, its number, and the table or
+% figure that supports it.
+\newcounter{finding}
+\crefname{finding}{Finding}{Findings}
+\newcommand{\finding}[2]{\refstepcounter{finding}\label{#1}\par\smallskip\noindent{\color{black!70}\vrule width 1.5pt}\hspace{5pt}\parbox{\dimexpr\linewidth-7pt}{\textbf{Finding \thefinding.} #2}\par\smallskip}
+\newcommand{\taueff}{\tau_{\mathrm{eff}}}
+\newcommand{\Aref}{A_{1}}
+\newcommand{\Atau}{A_{\tau}}
+\newcommand{\Spr}{\operatorname{Spr}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\pp}{\,pp}
+\newcommand{\TODO}[1]{\todo[inline,color=orange!25]{TODO: #1}}
+
+\icmltitlerunning{When Fewer Steps Mean Lower Temperature}
+
+\begin{document}
+
+\twocolumn[
+  \icmltitle{When Fewer Steps Mean Lower Temperature:\texorpdfstring{\\}{ }
+    Mean Collapse in Accelerated Flow-Matching Driving Policies}
+
+  \icmlsetsymbol{equal}{*}
+  \begin{icmlauthorlist}
+    \icmlauthor{Anonymous Authors}{anon}
+  \end{icmlauthorlist}
+  \icmlaffiliation{anon}{Anonymous Institution}
+  \icmlcorrespondingauthor{Anonymous Authors}{anon@anon.edu}
+  \icmlkeywords{flow matching, vision-language-action models, autonomous driving, ODE solvers, sampling temperature}
+  \vskip 0.3in
+]
+
+\printAffiliationsAndNotice{}
+
+\begin{abstract}
+Flow-matching driving policies are accelerated by integrating with fewer Euler steps or caching velocities, and these changes are usually reported as preserving accuracy. We show that first-order samplers pull every sample toward the conditional mean, by an amount that a parameter-free Gaussian model predicts to within 0.04 of what we measure on Alpamayo-1.5. On the real PhysicalAI-AV test split, the released 10-step samplers of three Alpamayo generations share one effective temperature (0.83--0.84), and at that temperature an accurate solver with scaled initial noise reproduces their single-sample error and their rate of changed driving decisions. What temperature does not reproduce is the tail: Euler sampling removes stopping decisions that the matching temperature keeps ($-0.8$\pp for Euler-4, 95\% CI $[-1.6,-0.2]$). Accelerations of flow policies should therefore be reported at matched effective temperature, with rare decisions checked separately. \TODO{one sentence on FlashDrive at matched temperature and on AlpaSim closed loop, when available.}
+\end{abstract}
+
+% ---------------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+Integrating Alpamayo-1.5 with four Euler steps instead of ten reduces its single-sample error by 0.28\,m, which reads as a free improvement. The same change also lowers the entropy of its driving decisions and alters about one decision in nine (\cref{tab:matched}). Neither change shows up in the trajectory-averaged metrics through which flow-policy accelerations are evaluated~\citep{flashdrive2026,probeflow2026,adavla2026,coda2026}.
+
+This paper explains these effects with one mechanism. Under rectified-flow interpolation~\citep{lipman2023flow,liu2023rectified} the initial velocity is $v(z,0)=\E[x_1\mid c]-z$, so a single Euler step returns the conditional mean, and more steps move toward the exact flow. Every first-order sampler therefore lies between the mean and the policy's distribution. Most of what such a sampler changes is what one would get by lowering the sampling temperature, but it also collapses rare modes that temperature preserves. We call this \emph{mean collapse}.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{\centering\vspace{1.4cm}\TODO{Teaser. (a) Bird's-eye view of one ambiguous test clip: six shared seeds under the reference solver, Euler-10 and Euler-4 contracting toward the Euler-1 conditional mean (star), endpoints colored by decision class. (b) Rate of cautious decisions vs.\ $\tau$: the explicit-temperature curve with a CI band, Euler-$k$ placed at its $\taueff$ and falling below the curve for stopping.}\vspace{1.4cm}}}
+  \caption{\textbf{Fewer Euler steps behave like a lower temperature, except on rare decisions.} \TODO{final caption with numbers.}}
+  \label{fig:teaser}
+\end{figure}
+
+\paragraph{Contributions.}
+\begin{itemize}
+  \item \textbf{Matched-temperature protocol.} We define the effective temperature $\taueff$ of a sampler by matching its seed spread to an accurate solver with scaled initial noise, and compare samplers to that solver at $\taueff$ (\cref{sec:protocol}).
+  \item \textbf{A parameter-free prediction.} The Gaussian contraction factor $\prod_i\cos\theta_i$, fed only the policy's conditional action variance, predicts the contraction we measure (\cref{tab:contraction}), and explains why the released samplers of three Alpamayo generations land at the same $\taueff$.
+  \item \textbf{What temperature explains on real driving data.} On 60 identical PhysicalAI-AV test clips per model, matched temperature accounts for the single-sample error and the decision-flip rate of Euler-$k$ in Alpamayo-1.5, R1 and 2 (\cref{tab:matched}).
+  \item \textbf{What it does not.} Euler sampling suppresses stopping beyond temperature, and its multi-sample coverage is worse than temperature predicts. Qwen-Drive, whose flow is nearly deterministic, bounds the claim: there the solver adds spread instead of removing it.
+  \item \textbf{Consequences for evaluation.} \TODO{FlashDrive: official checkpoint and cache at matched temperature. AlpaSim closed loop.}
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\section{Background and Notation}
+\label{sec:background}
+
+\paragraph{Flow-matching driving policies.} A VLA driving policy encodes cameras, ego history and a reasoning trace into a context $c$ and decodes an action $x_1$ (64 normalized acceleration and curvature commands over 6.4\,s in Alpamayo) by integrating $v_\theta(x,t\mid c)$ from $x_0=z\sim\mathcal{N}(0,I)$ to $t=1$. With $x_t=(1-t)z+tx_1$, the flow-matching minimizer is $v(x,t)=\E[x_1-z\mid x_t=x,c]$. Released policies use forward Euler with 10 uniform steps~\citep{alpamayo2025,qwendrive2026}.
+
+\paragraph{Notation.} $E_k$ is Euler with $k$ uniform steps. $\Atau$ is the reference solver, Heun with 32 steps (64 field evaluations), started from $\tau z$; $\Aref$ is the reference at $\tau=1$. All samplers for a clip share the same context and the same six noises. $\Spr(S)$ is the mean pairwise distance between the trajectories $S$ produces from different noises. A \emph{flip} is a change of decision class relative to $\Aref$ under the same noise. ADE$_1$ is the mean single-sample displacement to the logged human trajectory, and minADE$_6$ its minimum over six samples.
+
+\paragraph{Accelerations.} FlashDrive reuses the velocity on steps 3--6 of an 8-step Euler schedule~\citep{flashdrive2026}; ProbeFlow and AdaVLA adapt the number of steps~\citep{probeflow2026,adavla2026}; entropic time places steps by information about the output~\citep{stancevic2025entropic}; Coda corrects a few-step endpoint~\citep{coda2026}.
+
+% ---------------------------------------------------------------------------
+\section{Mean Collapse}
+\label{sec:theory}
+
+\paragraph{One Euler step returns the conditional mean.} Since $x_0=z$, $E_1(z)=z+v(z,0)=\E[x_1\mid c]$ for every $z$.
+
+\paragraph{Gaussian targets: contraction on any grid.} For $p(x_1\mid c)=\mathcal{N}(m,\operatorname{diag}(s^2))$ the field is linear, and coordinate $d$ evolves with scale $\|u_d(t)\|$, $u_d(t)=(1-t,\,ts_d)$. One Euler step multiplies the deviation from $m$ by $\langle u_d(t_i),u_d(t_{i+1})\rangle/\|u_d(t_i)\|^2$, so
+\begin{equation}
+  \frac{\|E_k(z)-m\|_d}{\|\Aref(z)-m\|_d}=\prod_{i=0}^{k-1}\cos\angle\bigl(u_d(t_i),u_d(t_{i+1})\bigr)\;\le\;1,
+  \label{eq:contraction}
+\end{equation}
+on any grid. The inequality appears in the proof of Proposition~2 of~\citet{claustre2026gaussian}; we use the closed form as a prediction. The factor for $E_{10}$ stays between 0.82 and 0.88 for $s_d\in[0.3,2]$, which is why policies with normalized actions land near the same value.
+
+\paragraph{Mixtures: which decisions can flip.}
+\begin{proposition}[Symmetric decisions do not flip]
+\label{prop:symmetry}
+Let $g$ be an orthogonal reflection with fixed hyperplane $H$, let $p(x_1\mid c)$ be $g$-invariant, and let the decision be the side of $H$. An explicit Runge--Kutta integrator whose steps satisfy $h\,\mathrm{Lip}(v(\cdot,t))<1$ returns the decision of the exact flow for almost every $z$.
+\end{proposition}
+\noindent The field is $g$-equivariant and hence tangent to $H$ on $H$; each step is an equivariant homeomorphism mapping $H$ to itself and depending continuously on $h$, so half-spaces are preserved. \TODO{full proof; discuss the Lipschitz condition near $t=1$.} Flips thus require broken symmetry. In solvable $K$-mode Gaussian mixtures, 99.95\% of the 408{,}769 samples that Euler or cached Euler sends to a different class end closer to the global mean than their exact endpoints (\cref{app:toy}), consistent with mean collapse. \TODO{proposition for two modes, or state as an empirical regularity.}
+
+% ---------------------------------------------------------------------------
+\section{Matched-Temperature Protocol}
+\label{sec:protocol}
+\begin{definition}
+The effective temperature of a sampler $S$ is the $\tau$ at which $\Spr(\Atau)=\Spr(S)$, interpolated over $\tau\in\{1,0.9,\dots,0.4\}$.
+\end{definition}
+For any metric $M$ we report the \emph{effect} $M(S)-M(\Aref)$ and the \emph{residual} $M(S)-M(A_{\taueff(S)})$, the part of the effect that temperature does not explain. Clips are the independent unit: every quantity, including $\taueff$, is recomputed inside a bootstrap over clips (2000 resamples). Equivalence is declared when the 90\% interval of the residual lies within margins fixed before analysis (ADE$_1$ and minADE$_6$: 0.05\,m; flips: 2\pp; stopping: 1\pp).
+
+% ---------------------------------------------------------------------------
+\section{Experimental Setup}
+\label{sec:setup}
+\paragraph{Policies.} Alpamayo-1.5, Alpamayo-R1, Alpamayo-2-Super and Qwen-Drive-1.0-4B (SFT and RL planners), frozen. Our integrators run inside each model's own sampling call with the model's step function, so the reasoning trace is shared across samplers within a clip.
+\paragraph{Data.} The same 60 clips from the PhysicalAI-AV test split~\citep{physicalai2026} for every model (one clip per dataset chunk, sampled before any analysis), six noise seeds each; the current frame is at 5.1\,s.
+\paragraph{Decisions.} Longitudinal (stop, decelerate, keep, accelerate) and lateral (left, right, lane shift, straight) classes are read from each plan with thresholds fixed in advance (\cref{app:protocols}).
+\TODO{Qwen-Drive uses Euler-64 as reference because of its endpoint parameterization; document.}
+
+% ---------------------------------------------------------------------------
+\section{Results}
+\label{sec:results}
+
+\input{tables/tab_contraction}
+
+\finding{find:contraction}{\emph{Every Euler sample contracts toward the conditional mean, by the amount the Gaussian model predicts.} For Alpamayo-1.5, all 400 samples of $E_4$, $E_8$ and $E_{10}$ lie closer to the conditional mean than the reference sample from the same noise, and the predicted and measured contraction agree to within 0.04 (\cref{tab:contraction}). Heun-5 and RK4 show no contraction. \TODO{contraction for R1, Alpamayo-2 and SmolVLA; requires saving actions in the probes.}}
+
+\input{tables/tab_matched}
+
+\finding{find:matched}{\emph{The released samplers share one effective temperature, and at that temperature their accuracy and decision changes are reproduced.} $\taueff(E_{10})$ is 0.83, 0.84 and 0.83 for the three Alpamayo generations, with intervals of width about 0.05 (\cref{tab:matched}). Against $\Aref$, $E_{10}$ lowers ADE$_1$ by 0.13--0.19\,m and flips 4.7--9.7\% of decisions; against $A_{\taueff}$ the ADE$_1$ residuals are within $\pm0.03$\,m and the flip residuals within 2\pp, with intervals that contain zero.}
+
+\finding{find:tail}{\emph{Temperature does not explain the tail: Euler sampling removes stopping decisions.} Pooling the three models, the stopping residual is $-0.40$\pp (95\% CI $[-0.83,-0.07]$) for $E_{10}$ and $-0.80$\pp ($[-1.64,-0.19]$) for $E_4$, against base stopping rates of 1.7--3.7\%. Lowering $\tau$ makes the reference stop \emph{more} often (e.g., 1.7\% to 2.5\% for Alpamayo-2), whereas fewer Euler steps make the policy stop less. Multi-sample coverage also departs from temperature: the minADE$_6$ residual is positive in all six cells of \cref{tab:matched}.}
+
+\finding{find:published}{\emph{Single-sample gains are temperature effects; coverage pays for them.} \TODO{Replace with the official FlashDrive analysis (checkpoint and cache separated, 60 clips): the smoke test places the cache at $\taueff\approx0.55$ with ADE$_1$ on the temperature curve. Also report the minADE$_k$ crossover on the unified sample.}}
+
+\finding{find:qwen}{\emph{When the flow is nearly deterministic, the solver adds spread instead.} Under the reference solver, Qwen-Drive's planners have a seed spread of 0.04\,m that $\tau$ barely changes, for both the SFT and the RL checkpoint. The released 10-step sampler has \emph{more} spread (0.16\,m) than the reference, and its best-of-six error is lower (1.42 vs.\ 1.56\,m for the RL planner). \TODO{verify on Qwen-Drive's own PhysicalAI evaluation protocol or soften.}}
+
+\paragraph{Safety.} In non-reactive log replay, collisions with logged agents are rare: across 60 clips, 7 clips contain any collision, and the differences between samplers come from 5 clips. The direction matches temperature ($\Aref$ collides more often than $A_{0.4}$ in all 5), but the evidence is too thin to support a safety claim. \TODO{AlpaSim closed loop: incident rates for $E_{10}$, $E_4$ and $A_\tau$ at $\tau\in\{1,0.84,0.65\}$ on 60 test scenes, then the pre-registered larger study.}
+
+% ---------------------------------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+\paragraph{Accelerating VLA sampling.} FlashDrive, ProbeFlow, AdaVLA and Coda reduce or correct flow sampling and report trajectory or success metrics~\citep{flashdrive2026,probeflow2026,adavla2026,coda2026}; our results suggest separating their gains from temperature before attributing them.
+\paragraph{Discretization and diversity.} Few-step generators lose rare modes in image synthesis~\citep{subflow2026}, few-step error has been tied to single-Gaussian assumptions~\citep{chen2025gmflow}, and Euler on Gaussian flows has been analyzed by \citet{claustre2026gaussian}. We study the consequence for decisions, in driving.
+\paragraph{Critical windows and schedules.} Speciation and symmetry breaking in diffusion~\citep{biroli2024dynamical,raya2023ssb} and entropic time~\citep{stancevic2025entropic} motivate where steps should go. A schedule targeting decision information passed a pre-registered confirmation on 436 unseen clips, yet its gain disappeared at matched temperature (\cref{app:schedules}); this negative result motivates the protocol.
+
+% ---------------------------------------------------------------------------
+\section{Discussion and Limitations}
+\label{sec:discussion}
+\paragraph{Recommendations.} Report $\taueff$ for any accelerated sampler, compare methods against $A_{\taueff}$, and examine rare decisions separately from averaged metrics. When a lower temperature is desired, set it explicitly; it then keeps stopping decisions that Euler removes.
+\paragraph{Limitations.} Decision classes are read from plans with fixed thresholds rather than from the vehicle's executed behavior. The reasoning trace is fixed within a clip \TODO{multi-seed language ablation}. Stopping is rare, so the tail result rests on pooled models. Human trajectories are single samples, so calibration is only partly testable. Three of the four policies come from one model family.
+
+\section*{Impact Statement}
+This work concerns how accelerated autonomous-driving policies are evaluated. Accelerations that silently reduce stopping decisions could pass accuracy checks, and comparing at matched temperature with tail checks makes such changes visible. We used public data and frozen public checkpoints; no vehicles were driven.
+
+\bibliography{references}
+\bibliographystyle{icml2026}
+
+\newpage
+\appendix
+\onecolumn
+\section{Solvable Mixture Models}
+\label{app:toy}
+\TODO{K-mode experiments (408,769 flips from Euler-2, Euler-4 and cached Euler-8; artifact mean\_attraction\_v1), symmetry check, $k^{-p}$ scaling.}
+
+\section{A Negative Result: Decision-Information Schedules}
+\label{app:schedules}
+\TODO{pre-registered confirmation on 436 clips (flip reduction $-0.88$\pp, $[-1.28,-0.52]$) and its disappearance at matched temperature.}
+
+\section{Manipulation: SmolVLA on LIBERO}
+\TODO{shrinkage on 288/288 probe samples; success insensitive to $\tau\in[0.5,1]$; LIBERO-10 drops at very low temperature.}
+
+\section{Protocols and Reproducibility}
+\label{app:protocols}
+\TODO{pre-registration documents, decision thresholds, seeds, data splits, compute.}
+
+\end{document}

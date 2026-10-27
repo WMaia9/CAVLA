@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+artifacts/**/*.pt
+artifacts/**/*.npz
+artifacts/**/*.npy
+.deps/hf_token
+# Large or machine-local: datasets, run outputs, isolated environments, credentials, local agent settings.
+data/
+artifacts/
+.deps/
+.claude/
+*.log
+paper/*.aux
+paper/*.log
+paper/*.out

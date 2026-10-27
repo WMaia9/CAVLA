@@ -1,0 +1,153 @@
+
+######## paper sample 100-159: 60 clips, 1000 joint resamples
+== alpamayo15  E1 spread 0.228 m  A1 spread 2.021 m  E4 1.162  E10 1.607  paper-shrink4 1.212  shrink10 1.629
+   control shrinkE14_t1.0: c=0.5477875773794949  (spread 1.162, target 1.162)
+   control shrinkMeanA4_t1.0: c=0.5748009984381497  (spread 1.162, target 1.162)
+   control shrinkCV4_t1.0: c=0.574800964910537  (spread 1.162, target 1.162)
+   control mixE14_t1.0: c=0.6292262547649443  (spread 1.159, target 1.162)
+   control shrinkX4_t1.0: c=0.45949353324249387  (spread 1.162, target 1.162)
+   control shrinkY4_t1.0: cannot reach target 1.162 (range 1.848-2.021)
+   control shrinkE110_t1.0: c=0.7832777802832425  (spread 1.607, target 1.607)
+   control shrinkMeanA10_t1.0: c=0.7950909440405667  (spread 1.607, target 1.607)
+   control shrinkCV10_t1.0: c=0.7950909011997283  (spread 1.607, target 1.607)
+   control mixE110_t1.0: c=0.3064105794765055  (spread 1.567, target 1.607)
+   control shrinkX10_t1.0: c=0.744441777933389  (spread 1.607, target 1.607)
+   control shrinkY10_t1.0: cannot reach target 1.607 (range 1.848-2.021)
+== alpamayo_r1  E1 spread 0.320 m  A1 spread 2.286 m  E4 1.323  E10 1.834  paper-shrink4 1.410  shrink10 1.873
+   control shrinkE14_t1.0: c=0.5364931519143283  (spread 1.323, target 1.323)
+   control shrinkMeanA4_t1.0: c=0.5789735014550388  (spread 1.323, target 1.323)
+   control shrinkCV4_t1.0: c=0.5789735135622323  (spread 1.323, target 1.323)
+   control mixE14_t1.0: c=0.6292262547649443  (spread 1.322, target 1.323)
+   control shrinkX4_t1.0: c=0.4647463117726147  (spread 1.323, target 1.323)
+   control shrinkY4_t1.0: cannot reach target 1.323 (range 2.123-2.286)
+   control shrinkE110_t1.0: c=0.7841286356560886  (spread 1.834, target 1.834)
+   control shrinkMeanA10_t1.0: c=0.8025995795615017  (spread 1.834, target 1.834)
+   control shrinkCV10_t1.0: c=0.802599583286792  (spread 1.834, target 1.834)
+   control mixE110_t1.0: c=0.3717239531688392  (spread 1.834, target 1.834)
+   control shrinkX10_t1.0: c=0.7529700105078518  (spread 1.834, target 1.834)
+   control shrinkY10_t1.0: cannot reach target 1.834 (range 2.123-2.286)
+== alpamayo2  E1 spread 0.206 m  A1 spread 2.211 m  E4 1.233  E10 1.748  paper-shrink4 1.283  shrink10 1.770
+   control shrinkE14_t1.0: c=0.5338936154730618  (spread 1.233, target 1.233)
+   control shrinkMeanA4_t1.0: c=0.5577698643319309  (spread 1.233, target 1.233)
+   control shrinkCV4_t1.0: c=0.5577698736451566  (spread 1.233, target 1.233)
+   control mixE14_t1.0: c=0.6107507855631411  (spread 1.239, target 1.233)
+   control shrinkX4_t1.0: c=0.4595351661555469  (spread 1.233, target 1.233)
+   control shrinkY4_t1.0: cannot reach target 1.233 (range 2.047-2.211)
+   control shrinkE110_t1.0: c=0.7802501027472317  (spread 1.748, target 1.748)
+   control shrinkMeanA10_t1.0: c=0.7906411583535373  (spread 1.748, target 1.748)
+   control shrinkCV10_t1.0: c=0.7906411471776664  (spread 1.748, target 1.748)
+   control mixE110_t1.0: c=0.3064105794765055  (spread 1.718, target 1.748)
+   control shrinkX10_t1.0: c=0.7478495533578098  (spread 1.748, target 1.748)
+   control shrinkY10_t1.0: cannot reach target 1.748 (range 2.047-2.211)
+euler4_t1.0      alpamayo15  tau 0.637 | flip res +1.51 [-1.28,+5.31] (90%: [-0.96,+4.48]) | ADE1 res -0.008 [-0.083,+0.067] | minADE6 res +0.061 [-0.070,+0.267] | ent -0.002
+euler4_t1.0      alpamayo_r1 tau 0.613 | flip res -2.04 [-5.73,+1.23] (90%: [-5.13,+0.80]) | ADE1 res -0.051 [-0.146,+0.060] | minADE6 res -0.002 [-0.107,+0.115] | ent +0.030
+euler4_t1.0      alpamayo2   tau 0.619 | flip res +1.43 [-1.59,+4.86] (90%: [-1.11,+4.18]) | ADE1 res +0.046 [-0.014,+0.109] | minADE6 res +0.075 [-0.004,+0.167] | ent +0.005
+euler4_t1.0      POOLED      flip    res +0.295 [-1.811,+2.641]
+euler4_t1.0      POOLED      ade1    res -0.004 [-0.059,+0.046]
+euler4_t1.0      POOLED      minade6 res +0.045 [-0.027,+0.130]
+shrink4_t1.0     alpamayo15  tau 0.662 | flip res +0.68 [-3.09,+4.48] (90%: [-2.52,+3.89]) | ADE1 res -0.053 [-0.190,+0.054] | minADE6 res -0.088 [-0.312,+0.101] | ent +0.015
+shrink4_t1.0     alpamayo_r1 tau 0.652 | flip res +1.05 [-2.32,+4.62] (90%: [-1.86,+4.05]) | ADE1 res -0.033 [-0.140,+0.086] | minADE6 res -0.003 [-0.115,+0.119] | ent +0.026
+shrink4_t1.0     alpamayo2   tau 0.639 | flip res +2.60 [-0.97,+6.90] (90%: [-0.53,+6.10]) | ADE1 res +0.038 [-0.077,+0.141] | minADE6 res +0.011 [-0.190,+0.153] | ent +0.015
+shrink4_t1.0     POOLED      flip    res +1.442 [-1.008,+3.989]
+shrink4_t1.0     POOLED      ade1    res -0.016 [-0.083,+0.048]
+shrink4_t1.0     POOLED      minade6 res -0.027 [-0.102,+0.044]
+shrinkE14_t1.0   alpamayo15  tau 0.637 | flip res +0.95 [-2.88,+4.76] (90%: [-2.19,+4.23]) | ADE1 res -0.052 [-0.198,+0.059] | minADE6 res -0.082 [-0.322,+0.106] | ent +0.032
+shrinkE14_t1.0   alpamayo_r1 tau 0.613 | flip res +1.29 [-2.76,+5.34] (90%: [-2.16,+4.62]) | ADE1 res -0.037 [-0.153,+0.096] | minADE6 res -0.007 [-0.125,+0.130] | ent +0.073
+shrinkE14_t1.0   alpamayo2   tau 0.619 | flip res +3.37 [-0.52,+7.94] (90%: [-0.07,+7.18]) | ADE1 res +0.043 [-0.075,+0.150] | minADE6 res +0.022 [-0.181,+0.163] | ent +0.033
+shrinkE14_t1.0   POOLED      flip    res +1.869 [-0.785,+4.669]
+shrinkE14_t1.0   POOLED      ade1    res -0.016 [-0.089,+0.053]
+shrinkE14_t1.0   POOLED      minade6 res -0.023 [-0.105,+0.052]
+shrinkMeanA4_t1.0 alpamayo15  tau 0.637 | flip res -1.83 [-5.50,+1.41] (90%: [-4.82,+0.95]) | ADE1 res +0.043 [-0.079,+0.158] | minADE6 res -0.011 [-0.232,+0.174] | ent +0.011
+shrinkMeanA4_t1.0 alpamayo_r1 tau 0.613 | flip res -3.43 [-6.79,-0.35] (90%: [-6.09,-0.81]) | ADE1 res -0.011 [-0.144,+0.142] | minADE6 res -0.050 [-0.187,+0.104] | ent +0.001
+shrinkMeanA4_t1.0 alpamayo2   tau 0.619 | flip res -3.02 [-6.35,-0.09] (90%: [-5.81,-0.46]) | ADE1 res +0.123 [-0.034,+0.268] | minADE6 res +0.055 [-0.187,+0.246] | ent +0.014
+shrinkMeanA4_t1.0 POOLED      flip    res -2.760 [-4.827,-0.948]
+shrinkMeanA4_t1.0 POOLED      ade1    res +0.052 [-0.048,+0.137]
+shrinkMeanA4_t1.0 POOLED      minade6 res -0.002 [-0.095,+0.077]
+shrinkCV4_t1.0   alpamayo15  tau 0.637 | flip res +19.84 [+12.33,+27.29] (90%: [+13.69,+26.17]) | ADE1 res +0.452 [-0.157,+1.003] | minADE6 res +0.562 [+0.071,+1.038] | ent +0.133
+shrinkCV4_t1.0   alpamayo_r1 tau 0.613 | flip res +12.40 [+6.28,+18.68] (90%: [+7.12,+17.85]) | ADE1 res +0.711 [+0.412,+1.066] | minADE6 res +0.691 [+0.406,+1.024] | ent +0.044
+shrinkCV4_t1.0   alpamayo2   tau 0.619 | flip res +16.15 [+9.63,+23.41] (90%: [+10.49,+22.25]) | ADE1 res +0.537 [-0.019,+1.076] | minADE6 res +0.575 [-0.082,+1.134] | ent +0.182
+shrinkCV4_t1.0   POOLED      flip    res +16.128 [+10.318,+22.576]
+shrinkCV4_t1.0   POOLED      ade1    res +0.567 [+0.113,+1.027]
+shrinkCV4_t1.0   POOLED      minade6 res +0.609 [+0.205,+1.029]
+mixE14_t1.0      alpamayo15  tau 0.635 | flip res +5.35 [+1.00,+10.03] (90%: [+1.67,+9.30]) | ADE1 res -0.015 [-0.176,+0.113] | minADE6 res +0.227 [-0.057,+0.577] | ent +0.116
+mixE14_t1.0      alpamayo_r1 tau 0.612 | flip res +7.65 [+0.93,+14.49] (90%: [+1.62,+12.97]) | ADE1 res +0.035 [-0.121,+0.213] | minADE6 res +0.041 [-0.170,+0.263] | ent +0.082
+mixE14_t1.0      alpamayo2   tau 0.621 | flip res +6.47 [+1.51,+11.90] (90%: [+2.13,+10.64]) | ADE1 res +0.095 [-0.030,+0.229] | minADE6 res +0.188 [-0.015,+0.422] | ent +0.150
+mixE14_t1.0      POOLED      flip    res +6.489 [+2.906,+9.789]
+mixE14_t1.0      POOLED      ade1    res +0.038 [-0.060,+0.132]
+mixE14_t1.0      POOLED      minade6 res +0.152 [-0.015,+0.323]
+shrinkX4_t1.0    alpamayo15  tau 0.637 | flip res -1.55 [-5.23,+1.88] (90%: [-4.77,+1.44]) | ADE1 res -0.087 [-0.236,+0.032] | minADE6 res -0.090 [-0.315,+0.072] | ent +0.015
+shrinkX4_t1.0    alpamayo_r1 tau 0.613 | flip res -4.27 [-8.16,-0.67] (90%: [-7.38,-1.40]) | ADE1 res -0.086 [-0.184,+0.029] | minADE6 res -0.015 [-0.131,+0.111] | ent +0.024
+shrinkX4_t1.0    alpamayo2   tau 0.619 | flip res -3.85 [-7.67,-0.22] (90%: [-7.14,-0.61]) | ADE1 res -0.020 [-0.154,+0.085] | minADE6 res +0.005 [-0.223,+0.160] | ent +0.136
+shrinkX4_t1.0    POOLED      flip    res -3.223 [-5.621,-1.005]
+shrinkX4_t1.0    POOLED      ade1    res -0.064 [-0.155,+0.007]
+shrinkX4_t1.0    POOLED      minade6 res -0.033 [-0.126,+0.040]
+euler10_t1.0     alpamayo15  tau 0.833 | flip res +0.46 [-1.18,+2.31] (90%: [-0.90,+2.04]) | ADE1 res +0.027 [-0.023,+0.095] | minADE6 res +0.106 [-0.033,+0.334] | ent -0.020
+euler10_t1.0     alpamayo_r1 tau 0.837 | flip res +0.01 [-2.03,+1.91] (90%: [-1.65,+1.58]) | ADE1 res -0.015 [-0.053,+0.036] | minADE6 res +0.017 [-0.032,+0.065] | ent -0.028
+euler10_t1.0     alpamayo2   tau 0.833 | flip res +2.04 [+0.03,+4.45] (90%: [+0.32,+4.01]) | ADE1 res +0.023 [-0.005,+0.054] | minADE6 res +0.024 [-0.017,+0.072] | ent -0.022
+euler10_t1.0     POOLED      flip    res +0.838 [-0.380,+2.236]
+euler10_t1.0     POOLED      ade1    res +0.011 [-0.019,+0.051]
+euler10_t1.0     POOLED      minade6 res +0.049 [-0.009,+0.138]
+shrink10_t1.0    alpamayo15  tau 0.843 | flip res +0.95 [-0.84,+2.99] (90%: [-0.56,+2.67]) | ADE1 res -0.026 [-0.078,+0.016] | minADE6 res -0.039 [-0.088,+0.007] | ent -0.012
+shrink10_t1.0    alpamayo_r1 tau 0.852 | flip res +1.87 [-0.07,+3.79] (90%: [+0.23,+3.52]) | ADE1 res -0.015 [-0.057,+0.039] | minADE6 res +0.023 [-0.025,+0.083] | ent -0.032
+shrink10_t1.0    alpamayo2   tau 0.842 | flip res +0.62 [-1.94,+3.29] (90%: [-1.42,+2.71]) | ADE1 res -0.007 [-0.097,+0.063] | minADE6 res -0.078 [-0.304,+0.046] | ent +0.042
+shrink10_t1.0    POOLED      flip    res +1.149 [-0.170,+2.506]
+shrink10_t1.0    POOLED      ade1    res -0.016 [-0.054,+0.018]
+shrink10_t1.0    POOLED      minade6 res -0.031 [-0.095,+0.017]
+shrinkE110_t1.0  alpamayo15  tau 0.833 | flip res +0.74 [-1.09,+2.86] (90%: [-0.81,+2.46]) | ADE1 res -0.027 [-0.081,+0.018] | minADE6 res -0.040 [-0.093,+0.010] | ent -0.010
+shrinkE110_t1.0  alpamayo_r1 tau 0.837 | flip res +1.68 [-0.47,+3.95] (90%: [-0.24,+3.65]) | ADE1 res -0.016 [-0.064,+0.043] | minADE6 res +0.026 [-0.028,+0.091] | ent -0.035
+shrinkE110_t1.0  alpamayo2   tau 0.833 | flip res +0.65 [-2.08,+3.32] (90%: [-1.49,+2.83]) | ADE1 res -0.005 [-0.097,+0.067] | minADE6 res -0.073 [-0.299,+0.052] | ent +0.037
+shrinkE110_t1.0  POOLED      flip    res +1.023 [-0.329,+2.468]
+shrinkE110_t1.0  POOLED      ade1    res -0.016 [-0.056,+0.020]
+shrinkE110_t1.0  POOLED      minade6 res -0.029 [-0.092,+0.019]
+shrinkMeanA10_t1.0 alpamayo15  tau 0.833 | flip res -0.09 [-2.00,+1.82] (90%: [-1.62,+1.47]) | ADE1 res +0.025 [-0.025,+0.073] | minADE6 res -0.009 [-0.060,+0.038] | ent -0.035
+shrinkMeanA10_t1.0 alpamayo_r1 tau 0.837 | flip res -1.38 [-2.98,-0.02] (90%: [-2.71,-0.20]) | ADE1 res +0.003 [-0.051,+0.070] | minADE6 res -0.002 [-0.058,+0.067] | ent -0.020
+shrinkMeanA10_t1.0 alpamayo2   tau 0.833 | flip res -1.01 [-3.53,+1.29] (90%: [-3.13,+0.97]) | ADE1 res +0.037 [-0.073,+0.131] | minADE6 res -0.055 [-0.313,+0.093] | ent +0.003
+shrinkMeanA10_t1.0 POOLED      flip    res -0.829 [-1.753,+0.058]
+shrinkMeanA10_t1.0 POOLED      ade1    res +0.022 [-0.030,+0.070]
+shrinkMeanA10_t1.0 POOLED      minade6 res -0.022 [-0.107,+0.038]
+shrinkCV10_t1.0  alpamayo15  tau 0.833 | flip res +6.30 [+2.77,+10.18] (90%: [+3.28,+9.63]) | ADE1 res +0.055 [-0.216,+0.304] | minADE6 res +0.094 [-0.106,+0.289] | ent +0.031
+shrinkCV10_t1.0  alpamayo_r1 tau 0.837 | flip res +3.06 [-0.19,+6.37] (90%: [+0.38,+5.82]) | ADE1 res +0.168 [+0.029,+0.334] | minADE6 res +0.147 [+0.016,+0.289] | ent +0.021
+shrinkCV10_t1.0  alpamayo2   tau 0.833 | flip res +3.99 [-0.67,+8.86] (90%: [-0.05,+8.05]) | ADE1 res +0.066 [-0.241,+0.337] | minADE6 res +0.040 [-0.403,+0.357] | ent +0.061
+shrinkCV10_t1.0  POOLED      flip    res +4.449 [+1.783,+7.398]
+shrinkCV10_t1.0  POOLED      ade1    res +0.096 [-0.114,+0.314]
+shrinkCV10_t1.0  POOLED      minade6 res +0.093 [-0.097,+0.275]
+mixE110_t1.0     alpamayo15  tau 0.816 | flip res +3.70 [+0.15,+7.04] (90%: [+0.69,+6.51]) | ADE1 res +0.007 [-0.086,+0.100] | minADE6 res +0.353 [+0.054,+0.755] | ent +0.073
+mixE110_t1.0     alpamayo_r1 tau 0.836 | flip res +5.56 [+0.45,+10.50] (90%: [+1.31,+9.82]) | ADE1 res +0.050 [-0.030,+0.160] | minADE6 res +0.064 [-0.075,+0.255] | ent +0.093
+mixE110_t1.0     alpamayo2   tau 0.821 | flip res +3.37 [-0.60,+7.39] (90%: [+0.00,+6.75]) | ADE1 res +0.053 [-0.032,+0.153] | minADE6 res +0.170 [+0.011,+0.379] | ent +0.159
+mixE110_t1.0     POOLED      flip    res +4.207 [+1.308,+7.235]
+mixE110_t1.0     POOLED      ade1    res +0.036 [-0.032,+0.107]
+mixE110_t1.0     POOLED      minade6 res +0.196 [+0.030,+0.409]
+shrinkX10_t1.0   alpamayo15  tau 0.833 | flip res -0.37 [-2.43,+1.82] (90%: [-2.04,+1.47]) | ADE1 res -0.042 [-0.105,+0.006] | minADE6 res -0.059 [-0.117,-0.014] | ent -0.025
+shrinkX10_t1.0   alpamayo_r1 tau 0.837 | flip res -1.38 [-3.71,+0.60] (90%: [-3.28,+0.30]) | ADE1 res -0.038 [-0.081,+0.014] | minADE6 res +0.018 [-0.035,+0.075] | ent -0.031
+shrinkX10_t1.0   alpamayo2   tau 0.833 | flip res -3.24 [-5.97,-1.11] (90%: [-5.56,-1.44]) | ADE1 res -0.031 [-0.135,+0.044] | minADE6 res -0.082 [-0.333,+0.058] | ent +0.075
+shrinkX10_t1.0   POOLED      flip    res -1.662 [-3.147,-0.294]
+shrinkX10_t1.0   POOLED      ade1    res -0.037 [-0.092,+0.006]
+shrinkX10_t1.0   POOLED      minade6 res -0.041 [-0.136,+0.020]
+heun3_t1.0       alpamayo15  tau 0.952 | flip res +16.45 [+9.80,+23.06] (90%: [+10.78,+21.67]) | ADE1 res +0.153 [+0.031,+0.305] | minADE6 res +0.458 [+0.107,+0.932] | ent +0.142
+heun5_t1.0       alpamayo15  tau 0.977 | flip res +9.07 [+4.30,+14.17] (90%: [+5.04,+13.34]) | ADE1 res +0.081 [-0.001,+0.204] | minADE6 res +0.248 [+0.041,+0.589] | ent +0.097
+
+Paired residual differences
+  euler4_t1.0-shrink4_t1.0 alpamayo15  flip    +0.827 [-2.480,+4.464]
+  euler4_t1.0-shrink4_t1.0 alpamayo_r1 flip    -3.097 [-6.197,-0.310]
+  euler4_t1.0-shrink4_t1.0 alpamayo2   flip    -1.171 [-4.469,+2.184]
+  euler4_t1.0-shrink4_t1.0 POOLED      flip    -1.147 [-3.340,+1.414]
+  euler4_t1.0-shrink4_t1.0 alpamayo15  ade1    +0.045 [-0.036,+0.150]
+  euler4_t1.0-shrink4_t1.0 alpamayo_r1 ade1    -0.018 [-0.086,+0.039]
+  euler4_t1.0-shrink4_t1.0 alpamayo2   ade1    +0.008 [-0.053,+0.087]
+  euler4_t1.0-shrink4_t1.0 POOLED      ade1    +0.012 [-0.023,+0.052]
+  euler4_t1.0-shrink4_t1.0 alpamayo15  minade6 +0.149 [-0.003,+0.363]
+  euler4_t1.0-shrink4_t1.0 alpamayo_r1 minade6 +0.002 [-0.075,+0.066]
+  euler4_t1.0-shrink4_t1.0 alpamayo2   minade6 +0.064 [-0.036,+0.227]
+  euler4_t1.0-shrink4_t1.0 POOLED      minade6 +0.072 [-0.008,+0.163]
+  euler10_t1.0-shrink10_t1.0 alpamayo15  flip    -0.488 [-2.603,+1.642]
+  euler10_t1.0-shrink10_t1.0 alpamayo_r1 flip    -1.861 [-3.905,+0.076]
+  euler10_t1.0-shrink10_t1.0 alpamayo2   flip    +1.417 [-0.394,+3.825]
+  euler10_t1.0-shrink10_t1.0 POOLED      flip    -0.311 [-1.465,+1.021]
+  euler10_t1.0-shrink10_t1.0 alpamayo15  ade1    +0.053 [-0.013,+0.152]
+  euler10_t1.0-shrink10_t1.0 alpamayo_r1 ade1    +0.000 [-0.033,+0.024]
+  euler10_t1.0-shrink10_t1.0 alpamayo2   ade1    +0.029 [-0.025,+0.105]
+  euler10_t1.0-shrink10_t1.0 POOLED      ade1    +0.028 [-0.002,+0.062]
+  euler10_t1.0-shrink10_t1.0 alpamayo15  minade6 +0.145 [-0.004,+0.384]
+  euler10_t1.0-shrink10_t1.0 alpamayo_r1 minade6 -0.007 [-0.049,+0.027]
+  euler10_t1.0-shrink10_t1.0 alpamayo2   minade6 +0.102 [-0.013,+0.322]
+  euler10_t1.0-shrink10_t1.0 POOLED      minade6 +0.080 [+0.010,+0.174]

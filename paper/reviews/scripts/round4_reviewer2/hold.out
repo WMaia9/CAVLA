@@ -1,0 +1,22 @@
+
+######## A1.5 clips 160-199: 40 clips, 1000 joint resamples
+== alpamayo15  E1 spread 0.210 m  A1 spread 1.590 m  E4 0.956  E10 1.269  paper-shrink4 0.997  shrink10 1.288
+   control shrinkE14_t1.0: c=0.5727509562857449  (spread 0.956, target 0.956)
+   control shrinkMeanA4_t1.0: c=0.6010051076300442  (spread 0.956, target 0.956)
+   control shrinkCV4_t1.0: c=0.6010051197372377  (spread 0.956, target 0.956)
+   control mixE14_t1.0: c=0.6387499659322202  (spread 0.980, target 0.956)
+   control shrinkX4_t1.0: c=0.5031160418875515  (spread 0.956, target 0.956)
+   control shrinkY4_t1.0: cannot reach target 0.956 (range 1.469-1.590)
+   control shrinkE110_t1.0: c=0.7857024972327054  (spread 1.269, target 1.269)
+   control shrinkMeanA10_t1.0: c=0.7983406479470432  (spread 1.269, target 1.269)
+   control shrinkCV10_t1.0: c=0.7983406740240753  (spread 1.269, target 1.269)
+   control mixE110_t1.0: c=0.46584003465250134  (spread 1.271, target 1.269)
+   control shrinkX10_t1.0: c=0.7526791985146701  (spread 1.269, target 1.269)
+   control shrinkY10_t1.0: cannot reach target 1.269 (range 1.469-1.590)
+euler4_t1.0      alpamayo15  tau 0.667 | flip res +1.95 [-1.62,+6.31] (90%: [-1.20,+5.49]) | ADE1 res +0.019 [-0.013,+0.050] | minADE6 res +0.008 [-0.031,+0.045] | ent +0.046
+euler10_t1.0     alpamayo15  tau 0.849 | flip res -0.01 [-1.72,+1.67] (90%: [-1.45,+1.38]) | ADE1 res +0.008 [-0.006,+0.023] | minADE6 res -0.005 [-0.034,+0.023] | ent -0.050
+shrink4_t1.0     alpamayo15  tau 0.692 | flip res +4.87 [-1.59,+12.03] (90%: [-0.71,+10.84]) | ADE1 res +0.025 [-0.047,+0.094] | minADE6 res -0.003 [-0.089,+0.070] | ent +0.151
+shrink10_t1.0    alpamayo15  tau 0.860 | flip res +0.50 [-2.50,+3.94] (90%: [-2.03,+3.05]) | ADE1 res -0.005 [-0.052,+0.034] | minADE6 res -0.029 [-0.100,+0.029] | ent +0.070
+heun3_t1.0       alpamayo15  tau 1.000 | flip res +18.75 [+11.25,+26.25] (90%: [+12.08,+25.00]) | ADE1 res +0.316 [+0.107,+0.563] | minADE6 res +0.302 [+0.143,+0.489] | ent +0.138
+heun5_t1.0       alpamayo15  tau 1.000 | flip res +13.75 [+6.67,+21.25] (90%: [+7.50,+20.00]) | ADE1 res +0.159 [+0.054,+0.282] | minADE6 res +0.199 [+0.083,+0.331] | ent +0.068
+euler6_t1.0      alpamayo15  tau 0.764 | flip res +1.45 [-1.36,+4.71] (90%: [-0.94,+3.98]) | ADE1 res +0.013 [-0.009,+0.035] | minADE6 res +0.003 [-0.029,+0.034] | ent -0.017

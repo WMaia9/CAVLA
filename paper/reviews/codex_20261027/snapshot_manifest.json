@@ -1,0 +1,33 @@
+{
+  "snapshot_utc": "2026-10-27T18:37:08.719060+00:00",
+  "files": {
+    "main.tex": "47c930ee22a667cdeec6e60054fa0bfb12babf5aa621be3367f8d4366eaf7f97",
+    "main.pdf": "1d8a919c6a3f9fa8ff2193a7d0532dcc83f0925afa57ab2d1998670a16fb0828",
+    "references.bib": "84807633f80acec9fcccaa78fe2a114fd679671fe88f67b1f2a0b263f260ccda",
+    "tables/tab_matched.tex": "c11d2fe32d4ea0a45ca80dba6fcbdd9a78b9fc0b2f51dbd3a64aa76e32462f82",
+    "tables/numbers.tex": "57da47b92309ccbe3d48d3ccc0beb0cbe1b35f60dd631856d45a09ca3b309442",
+    "tables/tab_contraction.tex": "1469de0c4d79bb5b01ef689ea5de02701ff7942c25e5f90a5a6dad2393ea6ba8",
+    "tables/numbers_tables.tex": "fd7b3f248fe8ded0e6aadf6358cc286fc4e3d2df8bdf9466bed228397ceb06e0",
+    "tables/make_tables.py": "98a4674b7271ce6022b21d83afe10a1d0e9d9be9b7a8c7ef6f8ddd292bed46a1",
+    "figures/make_fig_teaser.py": "a88bca1e73e96c881209226d375dd4ab694ce54823d3ccdd1d8e639efdff290e",
+    "figures/make_fig_curves_shrink_v3.py": "05a65bcd5669a4149a6c11750178d7bfb2b878d6cb6ecc8f2d8700c878550d00",
+    "figures/sig_numbers_v5_proposal.tex": "4dec40d5eceac28fad15cf40aa96b37698645ee4e6c81f7756b4f2d3dfc71229",
+    "figures/fig_curves_shrink_v3_2row.pdf": "b99768d7f354fe8884dc0bfb95332eb1307dc54cf9de64ebdf0d026a1b4db144",
+    "figures/fig_curves_2row.pdf": "e7a16827e004c29f77be393f427f40714ec35e5922973430b279a9f76d748584",
+    "figures/fig_teaser.pdf": "246d4f4399385e2a633607b48ee5bd927c7fb9114206c05e119697d4a858dbe9",
+    "figures/fig_curves_shrink_2row.pdf": "585c02168f502add2fd3b59af6b7016a0222e34d182e0382f562decf8ca94c03",
+    "figures/make_fig_mechanism.py": "17d01b0a256a909a12486ba586df3a2a6e3d4b5735d248ed76687b8708833dc5",
+    "figures/tab_matched_proposal.tex": "8a46ac0c82165e107dc61995839c2849db001d47d3bd7d175b335e04b0afcb99",
+    "figures/tab_matched_v5_proposal.tex": "7e38881aac76b7511af47e6416356f3567efa9113c984f0e0a95c82727d041f9",
+    "figures/fig_signature.pdf": "74534f3250ee1192fa1dd36ad5a37f25ac95b4b3419e364e8da084dc39ca3812",
+    "figures/make_tab_matched_proposal.py": "99769d89cbe7fcfd762d007bcc0c4ed230bfa2658b24562d5628ecbd07fe3c2e",
+    "figures/fig_mechanism.pdf": "9ff17a5cbd70f3510ca5355596757d39aab6d4a91510057df3e23227d8560c1d",
+    "figures/make_fig_curves.py": "c53c2e7ac86da9795c0ccb12db9cd7e9943b85652cebb8e4670372081a950731",
+    "figures/make_tab_matched_v5_proposal.py": "42946c2367fdfdf605668bc2e55487b1346693408a5271c036abb45a53006636",
+    "figures/fig_curves.pdf": "70fc073915d798ad2de141a3c61f865901ac21f80172dc8d550719af65df7074",
+    "figures/figstyle.py": "dcbbf8a826b1bad89638ffcda22d2e2339d171325297d6901758725b32212a20",
+    "figures/make_fig_signature.py": "87414d4fc3a91d21c36363ff4bf4f54fc8d07c7f3e1ebfe80ece5670c5defb26",
+    "figures/make_fig_curves_shrink.py": "4ab52fa5a3a67e5ac85b043c5156c83b57206f2c94bdbc39e19d77204aa8765e",
+    "figures/__pycache__/figstyle.cpython-312.pyc": "b9d672e3f6e67441a4dd98d7dc20fa27b5f9fa9a8d7022551e9127b08680bb6d"
+  }
+}

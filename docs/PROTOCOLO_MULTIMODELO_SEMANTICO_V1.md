@@ -1,0 +1,17 @@
+# Replicação entre checkpoints e controle de contexto
+
+21/10/2026. Objetivo: verificar se a decodificação parked/stopped é específica da representação Alpamayo R1 ou também está disponível em VLM geral e checkpoints de direção mais recentes. Não é proposta de benchmark como contribuição central.
+
+Congelar os 288 agentes, os três splits por log, PCA16, famílias logística/RBF, grades e seleção por validação dos experimentos anteriores. A avaliação de 48 agentes/12 logs já foi usada. Sem chamar esta rodada de confirmação independente ou de avaliação de segurança.
+
+Modelos locais: Qwen3-VL-8B-Instruct, Alpamayo-1.5-10B e, se executável com a memória disponível, Alpamayo2-Super. Alpamayo R1 é a referência já extraída. Qwen-Drive será tratado como modelo separado de Qwen3-VL; não presumir checkpoint instalado nem equivalência entre eles.
+
+Extrair somente hidden states do backbone VLM, com pesos congelados. Quatro profundidades relativas; para os modelos de 36 camadas, manter [8,16,24,36]. Usar o mesmo prefixo visual com 16 slots de imagens, somente frontal no slot12, resolução/grids equivalentes e pooling fracionário dos mesmos ROIs. Histórico posterior aos tokens visuais é excluído ou mantido como texto posterior sem efeito nos tokens sob atenção causal. Não executar nem avaliar planner neste experimento de representação. Verificar carregamento estrito, ausência de pesos aleatórios, ordem dos objetos e número de tokens. Registrar hashes e VRAM.
+
+Comparações: numérico + representação de cada checkpoint; numérico + média dos ROIs de cada cena; numérico + representação centrada pela média da cena. A média/centralização só usa features de entrada, sem rótulos. Ela não identifica causalmente estado do agente; é um controle de contexto. O dataset só tem uma cena mista no conjunto de avaliação; reportar a limitação.
+
+Para essa comparação a média/centralização usa os 288 agentes selecionados, com o mesmo conjunto de ROIs para todos os modelos. Não é a mesma média do controle anterior, que usava todos os ROIs disponíveis na cena. Reextrair também Alpamayo R1 pelo mesmo caminho de forward de todos os novos modelos. A inspeção encontrou uma diferença do Transformers entre hidden state final capturado pelo wrapper condicional e pelo módulo interno (normalizado); usar o wrapper condicional para todos, com logits limitados a um token, e descartar os pilotos com captura incompatível. A checagem de três ROIs do R1 tem alta similaridade, mas não reprodução exata da implementação nativa (L2 relativo0,91%, cosine mínimo0,99997); portanto, usar a nova baseline R1 comum como comparação principal e registrar essa diferença.
+
+Checagem posterior do extrator: o tokenizer geral produz um sufixo maior após as imagens (3264 tokens totais contra3006 na entrada nativa). Ao igualar o comprimento dos placeholders e zerar apenas IDs posteriores ao último token visual, a extração dos três ROIs reproduziu as features nativas com **diferença máxima0,0**. Essa checagem valida o caminho de pesos/captura; as comparações principais continuam com o prompt comum já definido para os quatro modelos. Nenhuma escolha de checkpoint/readout foi alterada por essa checagem.
+
+Resultados primários exploratórios: AUC e erro balanceado por checkpoint, ambos os readouts, todos os resultados sem escolher modelo pela avaliação. Bootstrap pareado por log para diferenças condicionais aos modelos fixos. Ganho entre checkpoints não identifica efeito de treinamento VLA, porque dados e objetivos de pré-treino podem diferir.

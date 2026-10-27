@@ -1,0 +1,605 @@
+000
+001
+002                           When Fewer Steps Mean Lower Temperature:
+003
+004
+                             Euler Sampling of Flow-Matching Driving Policies
+005
+006
+007
+008                                                      Anonymous Authors1
+009
+010
+                               Abstract                                                             reference A1 / Aτ            Euler Ek                       E1 (cond. mean)          Heun
+011
+012        Flow-matching driving policies are made faster                  (a)                                                   (b)
+                                                                                               80                       A1
+013        by integrating with fewer Euler steps, and the
+014        change is usually reported as preserving or im-                                              E4
+
+
+
+
+                                                                                                                                   decisions changed (%)
+                                                                                                                                                           20                 Heun-3
+           proving accuracy. We show that, at the level                                        60
+015
+
+
+                                                                            longitudinal (m)
+                                                                                                                                                                E2
+016        of the distributions they produce, few-step Euler                                           E1                                                  15
+017        samplers behave like an accurate reference solver                                   40                                                                        E4
+                                                                                                                                                                              Heun-5
+018        run at a lower sampling temperature. One Euler                                                                                                  10                 E6
+019        step returns the conditional mean, and more steps                                   20                                                                                  E10
+020        contract samples toward it by an amount that a                                                                                                   5
+                                                                                                                                                                       Aτ
+021        closed-form Gaussian factor matches at the me-                                       0
+022        dian. On 60 clips from the PhysicalAI-AV test                                                                                                    0
+                                                                                                      −40      −20           0                                  0.50        0.75         1.00
+023        split, the released 10-step samplers of three Al-
+                                                                                                         lateral (m)                                            temperature τ or τeff
+024        pamayo generations share an effective tempera-
+025        ture of 0.83–0.84, and the reference solver at that             Figure 1. Fewer Euler steps behave like a lower temperature;
+026        temperature reproduces 79–121% of their change                  Heun steps do not. (a) One PhysicalAI-AV test clip (Alpamayo-
+                                                                           1.5, ego at 10.5 m/s), bird’s-eye view, six shared noises. Four Eu-
+027        in single-sample error and in the rate of changed
+                                                                           ler steps (E4 , blue) move every sample of the reference solver
+028        driving decisions, while second-order Heun sam-                 (A1 , black) toward the one-step conditional mean (E1 , star); the
+029        plers with a similar budget fail the same test. The             one seed that goes straight under A1 turns left. (b) Share of de-
+030        match holds for rates over clips, not for indi-                 cisions that differ from A1 under the same noise. Black: the ref-
+031        vidual samples, and any contraction toward the                  erence solver started from τ z (95% clip-bootstrap band). Euler
+                                                                           samplers placed at their effective temperature fall on the curve;
+032        mean of the same size would pass it; temperature
+                                                                           Heun-3 and Heun-5 change 17.8% and 9.7% of decisions at al-
+033        is the explicit knob that reproduces it. We there-              most no change in temperature. 60 clips × 6 seeds; bars are 95%
+034        fore propose that accuracy gains from fewer steps               intervals.
+035        be reported against a reference solver at matched
+036        effective temperature, and we give a protocol and
+037        its statistics for doing so.                                    tained by keeping the reference solver and shrinking the
+038                                                                        initial noise.
+039                                                                        The reason is elementary. Under rectiﬁed-ﬂow interpola-
+040   1. Introduction                                                      tion (Lipman et al., 2023; Liu et al., 2023) the initial veloc-
+041                                                                        ity is v(z, 0) = E[x1 | c] − z, so a single Euler step returns
+042   Integrating Alpamayo-1.5 with four Euler steps instead
+      of the released ten lowers its single-sample error against           the conditional mean, and more steps move toward the ex-
+043                                                                        act ﬂow. A k-step Euler sampler therefore sits between the
+044   the human trajectory and changes about one decision in
+      ten, compared with an accurate reference solver (Figure 1            mean and the policy’s distribution, the same place a lower
+045                                                                        sampling temperature puts it. Accelerations that build on
+046   and Table 1). Should the improvement be credited to the
+      faster sampler? We argue that it should not: the same im-            ﬁrst-order integration (Li et al., 2026; Fang et al., 2026;
+047                                                                        Han et al., 2026; Tang et al., 2026) inherit this temperature
+048   provement, and nearly the same decision changes, are ob-
+                                                                           shift, and averaged metrics such as minADE register it as
+049       1
+            Anonymous Institution, Anonymous City, Anonymous Re-           an accuracy gain.
+050   gion, Anonymous Country. Correspondence to: Anonymous Au-
+051   thor <anon.email@domain.com>.
+                                                                           Contributions.
+052
+      Preliminary work. Under review by the International Conference
+053   on Machine Learning (ICML). Do not distribute.                                   • A matched-temperature evaluation protocol for ac-
+054
+                                                                       1
+                                                               When Fewer Steps Mean Lower Temperature
+
+055         celerated ﬂow samplers: estimate the sampler’s effec-                                  (a)                                                        (b)
+                                                                                                                     1.0                                                                                         Heun-5
+056         tive temperature τeﬀ from its seed spread, compare it                                                                                                                  1.0              Heun-3
+057         with the reference solver run at τeﬀ , and report effect,                                                0.8
+
+
+
+
+                                                                                                                                                               contraction ratio
+                                                                                                                                                                                   0.8
+058         residual and equivalence with clip-level intervals (Sec-
+
+                                                                                                  |xt − t m| / |z|
+                                                                                                                     0.6                      exact                                0.6
+059         tion 4).                                                                                                                                                                                band: Gaussian factor
+060                                                                                                                                                       E10                                       (Eq. 1), s ∈ [0.3, 1]
+                                                                                                                     0.4                                                           0.4
+                                                                                                                                                          E4
+061      • Evidence on three generations of a production driv-                                                                                                                                        Alpamayo-1.5
+                                                                                                                     0.2                                  E2                       0.2                Alpamayo-R1
+062        ing VLA on real test data. The released samplers                                                                                                                                           Alpamayo-2
+                                                                                                                             Gaussian target, s = 0.5
+063        share τeﬀ ≈ 0.83; temperature reproduces 79–121%                                                          0.0                                  E1                       0.0
+                                                                                                                                                                                                      Gaussian pred.
+
+064        of the ADE1 and ﬂip-rate changes of E4 and E10 ;                                                                0.0          0.5             1.0                              1 2    4      6     8    10
+065        Heun-3 and Heun-5 fail the same test (Figure 3 and Ta-                                                                 flow time t                                            field evaluations (NFE)
+066        ble 1).
+                                                                                                  Figure 2. Euler contracts samples toward the conditional
+067                                                                                               mean by the Gaussian factor of Equation (1). (a) One coor-
+068      • A mechanism with a closed form. Contraction                                            dinate of a Gaussian target (s = 0.5): deviation from the mean
+069        toward the ∏conditional mean (Figure 2), the Gaus-                                     path under the exact ﬂow (black) and under k Euler steps (blue,
+070        sian factor i cos θi that matches it at the median,                                    darker = fewer steps). Each step loses a factor cos θi , so Ek ends
+           and a symmetry condition under which no integrator                                     at 0, 0.40, 0.68 and 0.86 of the exact deviation for k = 1, 2, 4, 10.
+071
+                                                                                                  (b) Median ratio of each sample’s distance to E1 over the refer-
+072        changes a decision (Section 3).
+                                                                                                  ence sample’s, same noise, against ﬁeld evaluations (NFE); three
+073                                                                                               Alpamayo generations, 60 clips × 6 seeds. Band: the Gaussian
+074      • A boundary. Qwen-Drive’s planners are nearly de-                                       factor for s ∈ [0.3, 1]; squares: its prediction from Alpamayo-
+075        terministic; there the solver adds spread rather than                                  1.5’s conditional action variance (median and IQR; a separate sam-
+           removing it, and the temperature view does not apply.                                  ple of 200 clips, action space). Heun samplers (vermillion) barely
+076
+                                                                                                  contract at the same budget.
+077
+078    TODO: Add FlashDrive (ofﬁcial checkpoint and cache, matched temperature) and AlpaSim
+       closed-loop contributions when the runs ﬁnish; keep only what the data support.
+079                                                                                               3. Why Euler Steps Act Like Temperature
+080
+081                                                                                               One Euler step returns the conditional mean. Since
+      2. Background and Notation                                                                  x0 = z, E1 (z) = z + v(z, 0) = E[x1 | c] for every z:
+082
+083   Flow-matching driving policies. A VLA driving policy                                        the one-step sampler has no diversity at all.
+084   encodes cameras, ego history and a reasoning trace into a
+085   context c and decodes an action x1 (64 normalized acceler-                                  Gaussian targets: contraction on any grid. For p(x1 |
+086   ation and curvature commands over 6.4 s in Alpamayo) by                                     c) = N (m, diag(s2 )) the ﬁeld is linear and coordinate d
+087   integrating vθ (x, t | c) from x0 = z ∼ N (0, I) to t = 1.                                  evolves with scale ∥ud (t)∥, where ud (t) = (1 − t, tsd ).
+088   With xt = (1 − t)z + tx1 , the ﬂow-matching minimizer                                       One Euler step from ti to ti+1 multiplies coordinate d’s de-
+089   is v(x, t) = E[x1 − z | xt = x, c]. The released policies                                   viation from md by ⟨ud (ti ), ud (ti+1 )⟩/∥ud (ti )∥2 , whereas
+090   use forward Euler with 10 uniform steps (NVIDIA, 2025;                                      the exact ﬂow multiplies it by ∥ud (ti+1 )∥/∥ud (ti )∥. Writ-
+091   Qwen Team, 2026).                                                                           ing θd,i for the angle between ud (ti ) and ud (ti+1 ),
+092
+093                                                                                                                               Ek (z)d − md   ∏
+                                                                                                                                                 k−1
+      Notation. Ek is Euler with k uniform steps; Heun-k uses                                                                                  =     cos θd,i ≤ 1                                                      (1)
+094   2k ﬁeld evaluations. Aτ is the reference solver, Heun with                                                                  A1 (z)d − md   i=0
+095   32 steps (64 evaluations), started from τ z; A1 is the ref-
+096   erence at τ = 1. All samplers for a clip share the same                                     on any grid (Figure 2a). The inequality is implicit in the
+097   context, reasoning trace and six noises. Spr(S) is the mean                                 proof of Proposition 2 of Claustre et al. (2026); we use the
+098   pairwise distance between the trajectories S produces from                                  closed form as a prediction. For sd ≥ 0.3 the factor of E10
+099   different noises. A ﬂip is a change of decision class rela-                                 lies between 0.82 and 0.88. Coordinates with smaller sd
+100   tive to A1 under the same noise. ADE1 is the mean single-                                   contract more but carry little of the spread, so the aggregate
+101   sample displacement to the logged human trajectory.                                         factor is set by the high-variance coordinates.
+102
+103   Accelerations. FlashDrive reuses the velocity on steps 3–                                   Decisions protected by symmetry do not ﬂip.
+104   6 of an 8-step Euler schedule (Li et al., 2026); ProbeFlow                                  Proposition 3.1. Let g be an orthogonal reﬂection with
+105   and AdaVLA adapt the number of steps (Fang et al., 2026;                                    ﬁxed hyperplane H, let p(x1 | c) be g-invariant, and let
+106   Han et al., 2026); entropic time places steps by information                                the decision be the side of H. An explicit Runge–Kutta in-
+107   about the output (Stančević et al., 2025); Coda corrects a                                tegrator whose steps satisfy h Lip(v(·, t)) < 1 returns the
+108   few-step endpoint (Tang et al., 2026).                                                      decision of the exact ﬂow for almost every z.
+109
+                                                                                              2
+                                                                    When Fewer Steps Mean Lower Temperature
+
+110   The ﬁeld is g-equivariant and hence tangent to H on H;
+111                                                                                                  Finding 1. Euler samples contract toward the condi-
+      each step is an equivariant homeomorphism mapping H
+112                                                                                                  tional mean; Heun samples do not. In trajectory space,
+      to itself and depending continuously on h, so half-spaces
+113                                                                                                  92–93% of E4 and 90–93% of E10 samples lie closer
+      are preserved. Decision ﬂips therefore need an asymmetric
+114                                                                                                  to the one-step mean than the reference sample from the
+      context.
+115                                                                                                  same noise, with median ratios 0.66–0.68 for E4 and
+       TODO: full proof in the appendix; the Lipschitz condition can fail near t = 1, discuss.
+116                                                                                                  0.84–0.86 for E10 across the three models. The Gaussian
+117                                                                                                  factor of Equation (1), computed from Alpamayo-1.5’s
+                                                                                                     conditional action variance, gives 0.67 and 0.86 (Figure 2;
+118   4. Matched-Temperature Protocol and Setup
+119                                                                                                  per-model values in Table 2). It matches the median but
+120   Deﬁnition 4.1. The effective temperature of a sampler S                                        not the ranking of clips, so we use it as an explanation of
+121   is the τ at which Spr(Aτ ) = Spr(S), interpolated over                                         the typical value rather than as a per-clip predictor.
+122   τ ∈ {1, 0.9, . . . , 0.4}.
+123                                                                                                  Finding 2. The released samplers share one effective tem-
+124   For a metric M we report M (A1 ), M (S) and M (Aτeff (S) ).                                    perature, and temperature accounts for most of what they
+125   The residual M (S) − M (Aτeff (S) ) is the part of the sam-                                    change. τeﬀ (E10 ) is 0.83 [0.80, 0.86], 0.84 [0.82, 0.85]
+126   pler’s effect that temperature does not explain, and 1 −                                       and 0.83 [0.81, 0.85] for the three generations. The ref-
+127   residual/effect is the fraction explained. Clips are the inde-                                 erence solver at τeﬀ reproduces 79–121% of the ADE1
+128   pendent unit: every quantity, including τeﬀ , is recomputed                                    and ﬂip-rate changes of E4 and E10 (Figure 3 and Ta-
+129   in each of 1000 bootstrap resamples of clips, drawn jointly                                    ble 1). Flip residuals are at most 2.0 points in absolute
+130   across models because all models see the same clips. We                                        value. With 60 clips their intervals are too wide to estab-
+131   call S equivalent to Aτeff on a metric when the 95% interval                                   lish equivalence at the 2-point margin in most cells, and
+132   of the residual lies inside a margin declared in advance (2                                    one interval excludes zero: Alpamayo-2’s E10 changes
+133   points for ﬂip rates, 0.05 m for ADE1 ). Fractions explained                                   2.0 points more decisions than its matched temperature
+134   above 100% mean that the explicit temperature overshoots                                       [0.03, 4.4]. Euler is not temperature in every respect. Its
+135   the sampler’s effect; we therefore read residuals and their                                    best-of-six error (minADE6 ) is worse than the reference’s,
+136   intervals, not fractions, as evidence. The protocol compares                                   as fewer distinct samples imply, and slightly worse than
+137   distributions: the same noise can still produce different de-                                  the matched temperature (residual 0.00 to 0.11 m, positive
+138   cisions under S and Aτeff (Section 7).                                                         in 5 of 6 cells; Appendix A); decision-entropy residuals
+139                                                                                                  lie between -0.03 and 0.03.
+140   Budgets. The reference solver uses 64 ﬁeld evaluations                                          TODO: pre-registered conﬁrmation on fresh clips and seeds (the 436 clips of Ap-
+                                                                                                      pendix C were already used), primary endpoint E10 equivalence averaged over models.
+141   (NFE). Ek uses k; Heun-3 uses 6 and Heun-5 uses 10, so
+142   Heun-5 has the released sampler’s budget and Heun-3 sits
+143   between E4 and E10 .                                                                           Finding 3. Second-order samplers fail the same test.
+144                                                                                                  Heun-3 and Heun-5 barely contract (τeﬀ 0.95 and 0.98
+145   Policies. Alpamayo-1.5, Alpamayo-R1 and Alpamayo-2-                                            for Alpamayo-1.5), yet they ﬂip 17.8% and 9.7% of deci-
+146   Super, frozen; Qwen-Drive-1.0-4B (SFT and RL planners)                                         sions, against 1.3% and 0.6% for the reference solver at
+147   as a boundary case. Our integrators run inside each model’s                                    the same temperature; their ﬂip residuals are +16.5 and
+148   own sampling call with the model’s step function, so the                                       +9.1 points (Figure 3 and Table 1). Heun-5 has the re-
+149   reasoning trace is shared across samplers within a clip.                                       leased sampler’s budget. The test therefore discriminates:
+150                                                                                                  landing on the temperature curve is not a property of ev-
+151                                                                                                  ery cheap sampler. Part of Heun’s residual is its own in-
+152   Data. The same 60 clips from the PhysicalAI-AV test                                            tegration error rather than a departure from a distribution,
+153   split (NVIDIA, 2026) for every model (one clip per dataset                                     and we do not claim that every non-Euler sampler fails.
+154   chunk, sampled before any analysis), six noise seeds each,
+      with the current frame at 5.1 s.                                                                TODO: Heun-3/5 on Alpamayo-R1 and -2; a Heun control matched in displacement
+155                                                                                                   from A1 .
+
+156
+157   Decisions. Longitudinal (stop, decelerate, keep, acceler-                                      Finding 4. When the ﬂow is nearly deterministic, the
+158   ate) and lateral (left, right, lane shift, straight) classes are                               solver adds spread instead. Under the reference solver,
+159   read from each plan with thresholds ﬁxed in advance (Ap-                                       Qwen-Drive’s planners have a seed spread of 0.04 m that
+160   pendix E).                                                                                     τ barely changes, for both the SFT and the RL checkpoint.
+161                                                                                                  The released 10-step sampler has more spread (0.16 m)
+162   5. Results                                                                                     than the reference, and its best-of-six error is lower (1.42
+163                                                                                                  vs. 1.56 m for the RL planner).
+164
+                                                                                                 3
+                                                                                           When Fewer Steps Mean Lower Temperature
+
+165                                                                reference Aτ (Heun-32 from τz), 95% band         Euler Ek at τeff     Heun-k at τeff       residual to the curve
+166
+167                                                                    Alpamayo-1.5                                Alpamayo-R1                               Alpamayo-2
+                   (a)
+168
+
+
+                     ΔADE1 vs. A1 (m)
+                                                       0.0                            E10                                                                                  E10
+169                                                                             E6                                                 E10
+                                                                         E4                                                                                         E6
+                                               −0.2                                                                         E6                                E4
+170                                                          E2                                                     E4
+171                                            −0.4
+172                                            −0.6
+173
+174
+                   (b)
+175                                                    30
+
+
+
+
+                               decisions changed (%)
+176
+                                                       20                              Heun-3
+177
+178                                                                                        Heun-5
+179                                                    10
+
+180
+181                                                     0
+                                                             0.4       0.6           0.8            1.0   0.4      0.6           0.8     1.0      0.4        0.6         0.8          1.0
+182                                                                 temperature τ or τeff                       temperature τ or τeff                     temperature τ or τeff
+183
+184   Figure 3. Placed at its effective temperature, each Euler sampler lands on the explicit-temperature curve; Heun samplers do not.
+      Black: the reference solver started from τ z, as a change from τ =1, with a 95% clip-bootstrap band. Blue: Euler with k steps at its
+185
+      effective temperature (Section 4; horizontal bars are 95% intervals); vermillion: Heun-3 and Heun-5. Gray ticks join each sampler to the
+186   curve at the same τ ; their length is the residual of Table 1. (a) Single-sample error falls with temperature, and Euler follows it. (b) Euler
+187   changes about as many decisions as the reference at the same temperature; Heun changes 10–18% of decisions at τeﬀ ≈ 1. E1 , and E2
+188   for Alpamayo-R1 and -2, have τeﬀ < 0.4 and are not shown. 60 PhysicalAI-AV test clips × 6 seeds per model. Best-of-six error is in
+189   Appendix A.
+190
+191
+         TODO: unify Qwen-Drive numbers with the 60-clip sample; check on its own evaluation                             et al., 2026; Han et al., 2026; Tang et al., 2026). Our pro-
+192      protocol.
+                                                                                                                         tocol separates the part of such gains that a temperature
+193
+                                                                                                                         change reproduces.
+194
+195   The one-step limit. E1 contracts beyond the measured
+196   temperature range (τeﬀ < 0.4). At τ = 0.4 the reference                                                            Discretization and diversity. Few-step generators lose
+197   still changes 11–15 points fewer decisions than E1 , so our                                                        rare modes in image synthesis (Lin et al., 2026), few-step
+198   data do not show that E1 is matched by any temperature.                                                            error has been tied to single-Gaussian assumptions (Chen
+199    TODO: reference at τ ∈ {0.3, 0.2, 0.1}.                                                                           et al., 2025), and Euler on Gaussian ﬂows has been ana-
+200                                                                                                                      lyzed by Claustre et al. (2026). We study the consequence
+201                                                                                                                      for driving decisions.
+202   Rare decisions. Stopping is too rare in this sample to
+203   test: across the three models, the reference stops in 6, 6
+                                                                                                                         Critical windows and schedules. Speciation and sym-
+204   and 6 of 360 plans, coming from 4 clips in which the ve-
+                                                                                                                         metry breaking in diffusion (Biroli et al., 2024; Raya & Am-
+205   hicle is nearly stationary. We observe that lowering τ adds
+                                                                                                                         brogioni, 2023) and entropic time (Stančević et al., 2025)
+206   stops while fewer Euler steps remove them, and leave a
+                                                                                                                         motivate where steps should go. A schedule that targets
+207   test of this tail behavior to a sample enriched for stopping
+                                                                                                                         decision information passed a pre-registered conﬁrmation
+208   scenes. Log-replay collisions with logged agents are sim-
+                                                                                                                         on 436 clips not used to design it, yet its gain disappeared
+209   ilarly rare (all differences between samplers come from 5
+                                                                                                                         at matched temperature (Appendix C); this negative result
+210   distinct clips) and are not used as evidence.
+                                                                                                                         motivated the protocol.
+211    TODO: Finding on published accelerations: FlashDrive ofﬁcial checkpoint and cache at
+212    matched temperature (job running); minADEk crossover on the uniﬁed sample.
+
+213                                                                                                                      7. Discussion and Limitations
+214                                                                                                                      Recommendations. Report τeﬀ for any ﬁrst-order or
+215   6. Related Work
+                                                                                                                         cached sampler, and compare against the reference solver
+216   Accelerating VLA sampling. FlashDrive, ProbeFlow,                                                                  at that temperature before attributing accuracy gains to the
+217   AdaVLA and Coda reduce or correct ﬂow sampling and                                                                 sampler. If lower temperature is desired, set it explicitly so
+218   report trajectory or success metrics (Li et al., 2026; Fang                                                        that it is visible and tunable.
+219
+                                                                                                                   4
+                                                 When Fewer Steps Mean Lower Temperature
+
+220   Table 1. Euler samplers land on the explicit-temperature curve; Heun samplers do not. For each sampler S we report the reference
+      solver at τ =1 (A1 ), the sampler, and the reference solver at the sampler’s effective temperature (Aτeff ). Flips are decision changes
+221
+      relative to A1 under the same noise; the last column is the ﬂip residual S − Aτeff with a 95% interval from a bootstrap over clips.
+222   Shrinkk is a control with no integrator: each A1 sample moved linearly toward E1 to Ek ’s spread. 60 PhysicalAI-AV test clips × 6
+223   seeds per model.
+224
+225                                                                      ADE1 (m)                       Decision ﬂips (%)
+226                         Model            Sampler S     τeﬀ    A1          S       Aτeff        S      Aτeff         S − Aτeff
+227                         Alpamayo-1.5     E4            0.64   2.86    2.58         2.58      10.6       9.1       1.5 [−1.3, 5.3]
+228                                          Shrink4       0.66   2.86    2.55         2.60       8.9       8.2       0.7 [−3.1, 4.5]
+229                                          E10           0.83   2.86    2.73         2.70       4.7       4.3       0.5 [−1.2, 2.3]
+230                                          Shrink10      0.84   2.86    2.68         2.71       5.0       4.0       1.0 [−0.8, 3.0]
+231                                          Heun-3        0.95   2.86    2.96         2.81      17.8       1.3       16.5 [9.8, 23.1]
+                                             Heun-5        0.98   2.86    2.91         2.83       9.7       0.6        9.1 [4.3, 14.2]
+232
+233                         Alpamayo-R1      E4            0.61   2.47    2.10         2.15      10.8      12.9      −2.0 [−5.7, 1.2]
+                                             Shrink4       0.65   2.47    2.13         2.17      12.5      11.4      1.1 [−2.3, 4.6]
+234                                          E10           0.84   2.47    2.28         2.30       6.1       6.1      0.0 [−2.0, 1.9]
+235                                          Shrink10      0.85   2.47    2.29         2.31       7.5       5.6      1.9 [−0.1, 3.8]
+236
+                            Alpamayo-2       E4            0.62   2.93    2.61         2.56      14.7      13.3       1.4 [−1.6, 4.9]
+237                                          Shrink4       0.64   2.93    2.61         2.58      15.6      13.0       2.6 [−1.0, 6.9]
+238                                          E10           0.83   2.93    2.78         2.76       9.7       7.7        2.0 [0.0, 4.4]
+239                                          Shrink10      0.84   2.93    2.76         2.77       8.1       7.4       0.6 [−1.9, 3.3]
+240
+241
+242   Distribution, not trajectory. Matching holds for rates                      TODO: multi-seed language ablation; ReCogDrive and DiffusionDrive on NAVSIM.
+
+243   averaged over clips. Under the same noise, E4 and the ref-
+244   erence solver at τeﬀ still disagree on a sizable share of in-
+245   dividual decisions, and per-clip rates differ, so the two are           Impact Statement
+246   not interchangeable sample by sample or clip by clip.                   This work concerns how accelerated autonomous-driving
+247                                                                           policies are evaluated. Gains that come from a hidden tem-
+248   What the test identiﬁes. Matching spread and then com-                  perature change can hide shifts in the decision distribution,
+249   paring rates does not single out temperature. A post-hoc                and reporting effective temperature makes such shifts visi-
+250   shrinkage of reference samples toward E1 with the same                  ble. We used public data and frozen public checkpoints; no
+251   spread also passes it. We tested this directly. Moving                  vehicles were driven.
+252   each reference sample linearly toward E1 until its spread
+253   matches Ek ’s (Shrinkk in Table 1) gives ﬂip residuals of
+254                                                                           References
+      0.6 to 2.6 points, all with intervals that contain zero, just as
+255   Euler does. The two differ per sample: shrinkage contracts              Biroli, G., Bonnaire, T., de Bortoli, V., and Mézard, M. Dy-
+256   every sample by the same factor (median 0.56–0.58 at E4 ’s                namical regimes of diffusion models. Nature Communi-
+257   spread, 0.79–0.80 at E10 ’s), whereas Euler contracts 90–                 cations, 2024.
+258   93% of samples and less on the median (Finding 1). What
+259                                                                           Chen, H., Zhang, K., Tan, H., Xu, Z., Luan, F., Guibas, L.,
+      the evidence supports is that few-step Euler is a contrac-
+260                                                                             Wetzstein, G., and Bi, S. Gaussian mixture ﬂow match-
+      tion toward the conditional mean, of the size the Gaussian
+261                                                                             ing models. In International Conference on Machine
+      factor predicts, that rate-level evaluation cannot tell apart
+262                                                                             Learning, 2025.
+      from other contractions of the same size, and that explicit
+263   temperature is a visible and tunable way to obtain the same             Claustre, A., Negrel, H., Boyer, C., Nadjahi, K., and
+264   rates. Heun fails because it changes decisions without con-               Vanden-Eijnden, E. Gaussian ﬂow-matching schedules:
+265   tracting.                                                                 Implications for sampling and training. arXiv preprint
+266                                                                             arXiv:2609.25839, 2026.
+267   Limitations. Decision classes are read from plans with
+268                                                                           Fang, Z., Wang, J., Li, W., Zhou, Y., and Shi,
+      ﬁxed thresholds rather than from executed behavior; the
+269                                                                             Q. ProbeFlow: Training-free adaptive ﬂow match-
+      reasoning trace is ﬁxed within a clip; 60 clips do not es-
+270                                                                             ing for vision-language-action models. arXiv preprint
+      tablish equivalence at tight margins; rare decisions are
+271                                                                             arXiv:2603.17850, 2026.
+      untested; the positive replication comes from one model
+272   family, with Qwen-Drive as a different-family boundary                  Han, S., Han, Y., and Yi, Y. AdaVLA: Adaptive step
+273   case.                                                                     ﬂow matching for training-free acceleration of vision-
+274
+                                                                          5
+                                              When Fewer Steps Mean Lower Temperature
+
+275     language-action models. In IEEE/RSJ International Con-
+276     ference on Intelligent Robots and Systems, 2026.
+277
+278   Li, Z., Liang, Y., Zhang, H., Chen, J., Liang, Y., and Liu, Z.
+279     FlashDrive: Flash vision-language-action inference for
+280     autonomous driving. In Conference on Robot Learning,
+281     2026.
+282   Lin, Y., Shi, J., Ye, S., Wang, W., Yao, Y., and Liu, T. Sub-
+283     Flow: Sub-mode conditioned ﬂow matching for diverse
+284     one-step generation. arXiv preprint arXiv:2604.12273,
+285     2026.
+286
+287   Lipman, Y., Chen, R. T. Q., Ben-Hamu, H., Nickel, M.,
+288     and Le, M. Flow matching for generative modeling. In
+289     International Conference on Learning Representations,
+290     2023.
+291
+292   Liu, X., Gong, C., and Liu, Q. Flow straight and fast:
+293     Learning to generate and transfer data with rectiﬁed
+294     ﬂow. In International Conference on Learning Repre-
+295     sentations, 2023.
+296   NVIDIA. Alpamayo-R1: Bridging reasoning and action
+297    prediction for generalizable autonomous driving, 2025.
+298    TODO verify title, authors and arXiv id of the Alpamayo
+299    technical report.
+300
+301   NVIDIA.    PhysicalAI-Autonomous-Vehicles dataset.
+302    https://huggingface.co/datasets/
+303    nvidia/PhysicalAI-Autonomous-Vehicles,
+304    2026. TODO verify citation.
+305
+306   Qwen Team. Qwen-Drive-1.0. https://github.
+307    com/QwenLM/Qwen-Drive-1.0, 2026. TODO cite
+308    the technical report.
+309   Raya, G. and Ambrogioni, L. Spontaneous symmetry
+310     breaking in generative diffusion models. In Advances
+311     in Neural Information Processing Systems, 2023.
+312
+313   Stančević, D., Handke, F., and Ambrogioni, L. Entropic
+314     time schedulers for generative diffusion models. In Ad-
+315     vances in Neural Information Processing Systems, 2025.
+316
+317   Tang, Z., Chen, X., Rao, W., Li, X., Tan, W., Wang, Y., Shi,
+318     X., and Zhao, X. Fewer steps, better actions: Rethink-
+319     ing ﬂow-matching inference for VLA policies. arXiv
+320     preprint arXiv:2609.21216, 2026.
+321
+322
+323
+324
+325
+326
+327
+328
+329
+                                                                       6
+                                                                                              When Fewer Steps Mean Lower Temperature
+
+330   Table 2. Euler samplers contract toward the conditional mean; Heun does not. Median ratio of each sample’s distance to the
+      one-step mean E1 over the reference sample’s distance, from the same noise (share of samples with ratio < 1 in parentheses), 60 clips
+331
+      × 6 seeds. Gaussian: the closed-form factor of Equation (1) from Alpamayo-1.5’s conditional action variance (median over a separate
+332   sample of 200 clips in action space; it does not predict the per-clip ranking).
+333
+334                                                                              Sampler Alpamayo-1.5 Alpamayo-R1 Alpamayo-2 Gaussian
+335                                                                              E4             0.68 (92%)         0.66 (93%)        0.67 (92%)      0.67
+336                                                                              E10            0.86 (90%)         0.84 (93%)        0.85 (90%)      0.86
+337                                                                              Heun-5         0.96 (69%)              –                 –            –
+338
+339
+340
+341   A. Additional Results
+342
+343
+                                                                      reference Aτ (Heun-32 from τz), 95% band          Euler Ek at τeff     Heun-k at τeff       residual to the curve
+344
+345                                                                       Alpamayo-1.5                                 Alpamayo-R1                               Alpamayo-2
+                   (a)
+346
+
+
+
+                    ΔADE1 vs. A1 (m)
+                                                    0.00                                 E10                                                                                   E10
+347                                                                                E6                                                  E10
+                                                                                                                                                                        E6
+                                                                            E4                                                  E6                                E4
+348                                       −0.25                 E2                                                      E4
+349
+350                                       −0.50
+
+351                                       −0.75
+352               (b)
+
+
+
+
+                                  decisions changed (%)
+353                                                       30
+
+354                                                                                       Heun-3
+                                                          20
+355
+356                                                                                           Heun-5
+                                                          10
+357
+358                                                        0
+359                (c)                                    1.5
+
+
+
+
+                             ΔminADE6 vs. A1 (m)
+360
+361                                                       1.0
+362
+363                                                       0.5
+
+364
+                                                          0.0
+365
+                                                                0.4       0.6           0.8            1.0   0.4       0.6           0.8     1.0      0.4        0.6         0.8          1.0
+366
+                                                                       temperature τ or τeff                        temperature τ or τeff                     temperature τ or τeff
+367
+368   Figure 4. As Figure 3, with (c) best-of-six error (minADE6 ) as a change from A1 . Euler lies slightly above the temperature curve: fewer
+369   distinct samples cost best-of-k error beyond what temperature predicts.
+370
+371
+372
+373   B. Solvable Mixture Models
+374    TODO: K-mode experiments; note that ﬂips under Heun and RK4 also move toward the mean in these models, so the regularity does not single out ﬁrst-order samplers.
+375
+376
+377   C. A Negative Result: Decision-Information Schedules
+378
+       TODO: pre-registered conﬁrmation on 436 clips (ﬂip reduction −0.88 points, [−1.28, −0.52]) and its disappearance at matched temperature.
+379
+380
+381   D. Manipulation: SmolVLA on LIBERO
+382
+383    TODO: contraction of probe samples; success insensitive to τ ∈ [0.5, 1]; LIBERO-10 drops at very low temperature.
+
+384
+                                                                                                                       7
+                                                                   When Fewer Steps Mean Lower Temperature
+
+385   E. Protocols and Reproducibility
+386
+      TODO: pre-registration documents, decision thresholds, seeds, data splits, compute.
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+                                                                                            8
+

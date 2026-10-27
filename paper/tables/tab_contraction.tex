@@ -1,0 +1,14 @@
+\begin{table}[t]
+  \caption{\textbf{Euler samplers contract toward the conditional mean; Heun does not.} Median ratio of each sample's distance to the one-step mean $E_1$ over the reference sample's distance, from the same noise (share of samples with ratio $<1$ in parentheses), 60 clips $\times$ 6 seeds. Gaussian: the closed-form factor of \cref{eq:contraction} from Alpamayo-1.5's conditional action variance (median over a separate sample of 200 clips in action space; it does not predict the per-clip ranking).}
+  \label{tab:contraction}
+  \centering\footnotesize\setlength{\tabcolsep}{3pt}
+  \begin{tabular}{@{}lcccc@{}}
+    \toprule
+    Sampler & Alpamayo-1.5 & Alpamayo-R1 & Alpamayo-2 & Gaussian \\
+    \midrule
+    $E_4$ & 0.68 (92\%) & 0.66 (93\%) & 0.67 (92\%) & 0.67 \\
+    $E_{10}$ & 0.86 (90\%) & 0.84 (93\%) & 0.85 (90\%) & 0.86 \\
+    Heun-5 & 0.96 (69\%) & -- & -- & -- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
